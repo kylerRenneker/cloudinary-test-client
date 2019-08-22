@@ -1,24 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import config from './config'
 
 function App() {
+  const [file, setFile] = useState(null)
+
+  const handleImageSubmit = ev => {
+    ev.preventDefault()
+    
+    //const { image } = ev.target
+    console.log(file)
+
+    const form = new FormData()
+    form.append('image', file)
+
+    fetch(`${config.API_ENDPOINT}/upload-image`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        // 'Content-Type': 'multipart/form-data'
+      },
+      body: form
+    
+    }).then(res => {
+      console.log(res)
+    })
+  }
+
+  const onChange = (ev) => {
+    setFile(ev.target.files[0]) 
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={ev => handleImageSubmit(ev)} >
+        <label for="image-upload"></label>
+        <input onChange={onChange} id="image_upload" name="image" type="file" accept="image/x-jpg"></input>
+        <button type="submit">submit</button>
+      </form>
     </div>
   );
 }
